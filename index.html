@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+        //Declare variables...
+        /*This array contains data used to create arrays of characters.
+        In order to different types of special characters, simply add a name, starting Unicode Character #, and a range
+        to iterate through. */
+        var data = ["lowerArr", 97, 25, "specialsArr1", 33, 13, "capsArr", 65, 25, "specialsArr2", 58, 7, "numsArr", 48, 9, "specialsArr3", 91, 5];
+
+        //This will be the array containing all characters from which to draw.
+        var compArr = [];
+        var lowersOn = false, capsOn = false, specialsOn = false, numsOn = false;
+
+        do {
+            lowersOn = confirm("Would you like to use and require one or more lower case letters?");
+            capsOn = confirm("Would you like to use and require one or more upper case letters?");
+            specialsOn = confirm("Would you like to use and require special characters?");
+            numsOn = confirm("Would you like to use and require at least number?");
+            if (!lowersOn && !capsOn && !specialsOn && !numsOn) alert("Please select at least one criteria.");
+        } while (!lowersOn && !capsOn && !specialsOn && !numsOn);
+
+
+        //populates arrays with lowercase, uppercase, special characters and numbers
+        function popArr(arr, startUC, iterLength) { //populates the arrays
+            const startArrLength = arr.length;
+            for (let i = 0; i <= iterLength; i++) {
+                arr[startArrLength + i] = String.fromCharCode(i + startUC);
+            }
+        }
+
+        //generates arrays with names and values based on data variable and populates them with appropriate chars
+        function genArr() {
+            for (let i = 0; i < data.length; i += 3) {
+                popArr(window[data[i]] = [], data[i + 1], data[i + 2]);
+            }
+        }
+
+        //creates a composite array from which to draw from randomly
+        function genCompArr() { //rename this to genCompArr
+            if (lowersOn) {
+                compArr = compArr.concat(lowerArr);
+            }
+            if (capsOn) {
+                compArr = compArr.concat(capsArr);
+            }
+            if (numsOn) {
+                compArr = compArr.concat(numsArr);
+            }
+            if (specialsOn) {
+                compArr = compArr.concat(specialsArr);
+            }
+            console.log(compArr);
+
+        }
+
+        //generate complete array of possibilities
+        genArr();
+        var specialsArr = specialsArr1.concat(specialsArr2, specialsArr3); //combine the 3 ranges of special characters into one array
+        genCompArr();
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //******************************************Randomize it!*************************************************//////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        var passLength = 12;
+        var password = "";
+
+        function genPassword() {
+            for (j = 0; j < passLength; j++) {
+                const randNum = Math.floor(Math.random() * compArr.length);
+                password += compArr[randNum];
+            }
+            if (lowersOn) charCheck(lowerArr);
+            if (capsOn) charCheck(capsArr);
+            if (specialsOn) charCheck(specialsArr);
+            if (numsOn) charCheck(numsArr);
+            console.log(password);
+        }
+
+        function charCheck(arr) { //maybe this could be use the includes function
+            let hasChar = false;
+            outerLoop: for (let k = 0; k < passLength; k++) {
+                //check each letter of the password against each letter of the lowerArr by looping through lowerArr
+                for (let m = 0; m < arr.length; m++) {
+                    if (password.charAt(k) === arr[m]) { //if the letter matches a letter from the lowerArr...
+                        hasChar = true; //...it satifies the requirement, and...
+                        break outerLoop; //...you can break from this loop
+                    }
+                }
+            }
+            if (!hasChar) { //if there is not a single instance of the character type, reroll for a new password!
+                genPassword();
+            }
+
+        }
+        genPassword();
+    </script>
+
+</html>
