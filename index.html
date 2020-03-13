@@ -9,99 +9,114 @@
 
 <body>
     <script type="text/javascript">
-        //Declare variables...
-        /*This array contains data used to create arrays of characters.
-        In order to different types of special characters, simply add a name, starting Unicode Character #, and a range
-        to iterate through. */
-        var data = ["lowerArr", 97, 25, "specialsArr1", 33, 13, "capsArr", 65, 25, "specialsArr2", 58, 7, "numsArr", 48, 9, "specialsArr3", 91, 5];
-
-        //This will be the array containing all characters from which to draw.
-        var compArr = [];
-        var lowersOn = false, capsOn = false, specialsOn = false, numsOn = false;
-
-        do {
-            lowersOn = confirm("Would you like to use and require one or more lower case letters?");
-            capsOn = confirm("Would you like to use and require one or more upper case letters?");
-            specialsOn = confirm("Would you like to use and require special characters?");
-            numsOn = confirm("Would you like to use and require at least number?");
-            if (!lowersOn && !capsOn && !specialsOn && !numsOn) alert("Please select at least one criteria.");
-        } while (!lowersOn && !capsOn && !specialsOn && !numsOn);
-
-
-        //populates arrays with lowercase, uppercase, special characters and numbers
-        function popArr(arr, startUC, iterLength) { //populates the arrays
-            const startArrLength = arr.length;
-            for (let i = 0; i <= iterLength; i++) {
-                arr[startArrLength + i] = String.fromCharCode(i + startUC);
-            }
-        }
-
-        //generates arrays with names and values based on data variable and populates them with appropriate chars
-        function genArr() {
-            for (let i = 0; i < data.length; i += 3) {
-                popArr(window[data[i]] = [], data[i + 1], data[i + 2]);
-            }
-        }
-
-        //creates a composite array from which to draw from randomly
-        function genCompArr() { //rename this to genCompArr
-            if (lowersOn) {
-                compArr = compArr.concat(lowerArr);
-            }
-            if (capsOn) {
-                compArr = compArr.concat(capsArr);
-            }
-            if (numsOn) {
-                compArr = compArr.concat(numsArr);
-            }
-            if (specialsOn) {
-                compArr = compArr.concat(specialsArr);
-            }
-            console.log(compArr);
-
-        }
-
-        //generate complete array of possibilities
-        genArr();
-        var specialsArr = specialsArr1.concat(specialsArr2, specialsArr3); //combine the 3 ranges of special characters into one array
-        genCompArr();
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //******************************************Randomize it!*************************************************//////
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        var passLength = 12;
+        /*the data array can be modified flexibly. Simply add a name for a character set followed by two
+        numbers. The first number is the Unicode character # to begin adding to that charset. the second number
+        is one less than the total number of characters you would like to include in that set.*/
+        var data = ["lower case letters", 97, 25, "upper case letters", 65, 25, "numbers", 48, 9, "special characters", 33, 13, "special characters", 58, 7, "special characters", 91, 5];
+        var charSets = [];
+        var fullCharSet = [];
+        var minCharOn = false;
         var password = "";
-
-        function genPassword() {
-            for (j = 0; j < passLength; j++) {
-                const randNum = Math.floor(Math.random() * compArr.length);
-                password += compArr[randNum];
-            }
-            if (lowersOn) charCheck(lowerArr);
-            if (capsOn) charCheck(capsArr);
-            if (specialsOn) charCheck(specialsArr);
-            if (numsOn) charCheck(numsArr);
-            console.log(password);
-        }
-
-        function charCheck(arr) { //maybe this could be use the includes function
-            let hasChar = false;
-            outerLoop: for (let k = 0; k < passLength; k++) {
-                //check each letter of the password against each letter of the lowerArr by looping through lowerArr
-                for (let m = 0; m < arr.length; m++) {
-                    if (password.charAt(k) === arr[m]) { //if the letter matches a letter from the lowerArr...
-                        hasChar = true; //...it satifies the requirement, and...
-                        break outerLoop; //...you can break from this loop
+        var passLength;
+        //Generate character sets based on data variable
+        for (let i = 0; i < (data.length / 3); i++) {
+            const index = i * 3;
+            charSets[i] = {
+                name: data[index],
+                startUC: data[index + 1],
+                range: data[index + 2],
+                array: [],
+                on: false,
+                popArray: function () {
+                    for (let j = 0; j < this.range; j++) {
+                        this.array[j] = String.fromCharCode(this.startUC + j);
                     }
                 }
             }
-            if (!hasChar) { //if there is not a single instance of the character type, reroll for a new password!
-                genPassword();
-            }
-
+            charSets[i].popArray();
         }
-        genPassword();
+        console.log(charSets);
+
+        /* combine any number of character sets into one character set. useful for combining charsets whose
+        unicode numbers are nonsequential */
+        function combineArrays() { //this function takes the charSets index number of arrays you wish to combine
+            for (let m = 1; m < arguments.length; m++) {
+                //the first argument is the array into which other arrays are concat-ed
+                charSets[arguments[0]].array = charSets[arguments[0]].array.concat(charSets[arguments[m]].array);
+                delete charSets[arguments[m]]; //delete the charSet objects containing arrays that were added the first
+            }
+        }
+
+        //The callback function that is used to turn various character sets on and off
+        enableAndCombineArrs = function (element) {
+            element.on = confirm("Would you like to enable and require a minimum of one " + element.name + "?");
+            if (element.on) {
+                fullCharSet = fullCharSet.concat(element.array);
+                minCharOn = true;
+            }
+        }
+
+        //Make the special character sets into one
+        combineArrays(3, 4, 5);
+
+        //Allow the user to select which character Sets to use
+        do {
+            charSets.forEach(enableAndCombineArrs);
+            if (!minCharOn) alert("Please select at least one character type."); //if they have not selected at least one type, continue looping
+        } while (!minCharOn)
+
+        //ask the user for a password length
+        do {
+            passLength = prompt("How many characters long should the password be? Available range is 8 to 128.");
+            passLength = parseInt(passLength);
+            /*NaN is the only value that is not equal to itself. If the first letter of the users' input is not a number,
+            parseInt returns Nan, and passLength !== passLengtwill evaluate to true. This statement also evaluates
+            whether the number is in the available range of 8 to 128.*/
+            if (passLength !== passLength || passLength < 8 || passLength > 128) alert("Please enter a valid integer value within the range.");
+        } while (passLength !== passLength || passLength < 8 || passLength > 128) //check for NaN and range again
+
+        //Now, time to randomize it
+
+        //for each charSet, if it is on, add one of those characters randomly to the password.
+        addToPass = function (element) {
+            if (element.on) {
+                password += element.array[Math.floor(Math.random() * element.array.length)]
+            }
+        }
+        charSets.forEach(addToPass);
+
+        /*declare a variable to determine the starting length of the password, then add characters randomly from the
+        full character set*/
+        var startLength = password.length;
+        for (n = 0; n < (passLength - startLength); n++) {
+            const randNum = Math.floor(Math.random() * fullCharSet.length);
+            password += fullCharSet[randNum];
+        }
+
+        //Finally, randomize the order of the characters selected so that the required characters are not always in the same order.
+        function reOrderPass() {
+            var passElems = password.split('');
+            var usedElems = [];
+            var currentElem;
+            password = "";
+            for (o = 0; o < passElems.length; o++) {
+                do {
+                    currentElem = Math.floor(Math.random() * passElems.length);
+                } while (usedElems.includes(currentElem))
+                password += passElems[currentElem];
+                usedElems[o] = currentElem;
+            }
+        }
+
+        //Test that the reordering function is working properly
+        console.log(password);
+        reOrderPass();
+        console.log(password);
+        reOrderPass();
+        console.log(password);
+        reOrderPass();
+        console.log(password);
     </script>
+</body>
 
 </html>
