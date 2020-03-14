@@ -13,7 +13,7 @@ After a lot of tinkering, I was able to create code that generates arrays of cha
 	this.array[j] = String.fromCharCode(this.startUC + j);
 	}
 
-You will notice several instances of the `this`keyword. "This" is because I decided that creating an array of character set objects (`charSets[]`) would be the most efficient way to call on specific characteristics of various character sets later on, such as whether they were on or off, what characters they contain, etc. This also enables the user to very easily add new character sets.
+You will notice several instances of the `this`keyword. This is because I decided that creating an array of character set objects (`charSets[]`) would be the most efficient way to call on specific characteristics of various character sets later on, such as whether they were on or off, what characters they contain, etc. This also enables the user to very easily add new character sets.
 
 speaking of character sets and Unicode, you will notice the following line of code in line 8 of the script:
 
@@ -71,7 +71,7 @@ The function is found here:
 		   arrays that were added the first*/
 	    }
     }
-When callling the function, simply provide the index numbers of the arrays you wish to combine. For instance `combineArrays(3,4,5);` combines the special characters array in this example. It then deletes the second two special characters arrays, because they now appear in one array, charSet[3].
+When calling the function, simply provide the index numbers of the arrays you wish to combine. For instance `combineArrays(3,4,5);` combines the special characters array in this example. It then deletes the second two special characters arrays, because they now appear in one array, charSet[3].
 Delete does not change index numbers, so if you want to then use combineArrays() with hypothetical charSets[6,7,8,9,10], it will still work properly. Additionally, it can take any number of arrays, and it can also combine non-consecutive arrays. In my program, I only called combineArrays(3,4,5), but there is flexibility for "future developers" to add new arrays and easily combine them if they so chose.
 
 # Fast-forward: Generating a Random Password
