@@ -5,7 +5,7 @@ var generateBtn = document.querySelector("#generate"); //find the generate butto
 /*the data array can be modified flexibly. Simply add a name for a character set followed by two
 numbers. The first number is the Unicode character # to begin adding to that charset. the second number
 is one less than the total number of characters you would like to include in that set.*/
-var data = ["lower case letters", 97, 25, "upper case letters", 65, 25, "numbers", 48, 9, "special characters", 33, 13, "special characters", 58, 7, "special characters", 91, 5];
+var data = ["lower case letters", 97, 25, "upper case letters", 65, 25, "numbers", 48, 9, "special characters", 33, 13, "special characters", 58, 6, "special characters", 91, 5];
 var charSets = [];
 var fullCharSet = [];
 var minCharOn = false;
