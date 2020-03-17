@@ -21,12 +21,13 @@ for (let i = 0; i < (data.length / 3); i++) {
     array: [],
     on: false,
     popArray: function () {
-      for (let j = 0; j < this.range; j++) {
+      for (let j = 0; j <= this.range; j++) {
         this.array[j] = String.fromCharCode(this.startUC + j);
       }
     }
   }
   charSets[i].popArray();
+  console.log(charSets[i].array);
 }
 //console.log(charSets);
 
